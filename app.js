@@ -1,6 +1,6 @@
 let heroesData = [];
 const xhr = new XMLHttpRequest();
-xhr.open('GET', '/heroes.json', false);
+xhr.open('GET', 'heroes.json', false);
 xhr.send(null);
 
 if (xhr.status === 200) {
