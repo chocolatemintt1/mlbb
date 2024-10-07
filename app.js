@@ -25,7 +25,7 @@ const heroes = [
     { id: 17, name: "Fredrinn", role: "Fighter", damage: 6, durability: 8, cc: 6, image: "assets/fredrinn.webp" },
 
 
-    
+
     { id: 18, name: "Alucard", role: "Fighter", damage: 8, durability: 5, cc: 3, image: "assets/alucard.webp" },
     { id: 18, name: "Alucard", role: "Assassin", damage: 8, durability: 5, cc: 3, image: "assets/alucard.webp" },
     { id: 19, name: "Bane", role: "Fighter", damage: 7, durability: 6, cc: 5, image: "assets/bane.webp" },
@@ -171,7 +171,7 @@ const heroes = [
     { id: 103, name: "Melissa", role: "Marksman", damage: 9, durability: 2, cc: 4, image: "assets/melissa.webp" },
     { id: 104, name: "Beatrix", role: "Marksman", damage: 8, durability: 3, cc: 1, image: "assets/beatrix.webp" },
     { id: 105, name: "Natan", role: "Marksman", damage: 6, durability: 2, cc: 2, image: "assets/natan.webp" }
-  ];
+];
 
 const roleOrder = ["Tank", "Fighter", "Assassin", "Mage", "Marksman", "Support"];
 
@@ -235,16 +235,7 @@ const AlertDescription = ({ children }) => (
 );
 
 const patchNotes = [
-    {
-        version: "1.0.0",
-        date: "2024-10-06",
-        changes: [
-            "Initial release of MLBB Team Composition Analyzer",
-            "Added hero selection system",
-            "Implemented team composition analysis",
-            "Added light/dark mode toggle"
-        ]
-    },
+    // put new patch notes here
     {
         version: "1.1.0",
         date: "2024-10-07",
@@ -262,8 +253,17 @@ const patchNotes = [
             "Improved the visual presentation of the analysis",
             "The component will now show why one team has an advantage over the other, or why they're evenly matched"
         ]
+    },
+    {
+        version: "1.0.0",
+        date: "2024-10-06",
+        changes: [
+            "Initial release of MLBB Team Composition Analyzer",
+            "Added hero selection system",
+            "Implemented team composition analysis",
+            "Added light/dark mode toggle"
+        ]
     }
-    // Add more patch notes as needed
 ];
 
 const BulletinBoard = () => {
