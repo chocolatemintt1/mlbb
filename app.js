@@ -146,6 +146,145 @@ const groupHeroesByRole = (heroes) => {
     return grouped;
 };
 
+const ChevronIcon = ({ isExpanded }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    >
+        {isExpanded ? (
+            <polyline points="18 15 12 9 6 15" />
+        ) : (
+            <polyline points="6 9 12 15 18 9" />
+        )}
+    </svg>
+);
+
+const Alert = ({ children, style }) => (
+    <div
+        style={{
+            padding: '16px',
+            borderRadius: '8px',
+            ...style
+        }}
+    >
+        {children}
+    </div>
+);
+
+const AlertTitle = ({ children, className }) => (
+    <div
+        style={{
+            fontSize: '1.1em',
+            fontWeight: 'bold',
+            marginBottom: '8px'
+        }}
+        className={className}
+    >
+        {children}
+    </div>
+);
+
+const AlertDescription = ({ children }) => (
+    <div style={{ fontSize: '0.95em' }}>
+        {children}
+    </div>
+);
+
+const patchNotes = [
+    {
+        version: "1.0.0",
+        date: "2024-04-07",
+        changes: [
+            "Initial release of MLBB Team Composition Analyzer",
+            "Added hero selection system",
+            "Implemented team composition analysis",
+            "Added light/dark mode toggle"
+        ]
+    },
+    {
+        version: "1.1.0",
+        date: "2024-04-08",
+        changes: [
+            "Added role filtering system",
+            "Improved UI responsiveness",
+            "Added team statistics calculation",
+            "Implemented reset functionality",
+            "Added [Team Advantage Analysis] after both team picked their hero compositions"
+        ]
+    }
+    // Add more patch notes as needed
+];
+
+const BulletinBoard = () => {
+    const [isExpanded, setIsExpanded] = React.useState(false);
+
+    const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    return (
+        <div className="bulletin-board">
+            <div
+                className="bulletin-header"
+                onClick={toggleExpand}
+                style={{
+                    backgroundColor: 'var(--card-background)',
+                    border: '1px solid var(--card-border)',
+                    borderRadius: '8px',
+                    padding: '15px',
+                    marginBottom: '20px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}
+            >
+                <h2 style={{ margin: 0 }}>Website Adjustments</h2>
+                <ChevronIcon isExpanded={isExpanded} />
+            </div>
+
+            <div className={`bulletin-content ${isExpanded ? 'expanded' : ''}`}
+                style={{
+                    maxHeight: isExpanded ? '1000px' : '0',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s ease-in-out',
+                    marginBottom: isExpanded ? '20px' : '0'
+                }}
+            >
+                {patchNotes.map((patch, index) => (
+                    <Alert
+                        key={index}
+                        style={{
+                            marginBottom: '10px',
+                            backgroundColor: 'var(--card-background)',
+                            border: '1px solid var(--card-border)'
+                        }}
+                    >
+                        <AlertTitle className="flex justify-between items-center">
+                            <span>Version {patch.version}</span>
+                            <span style={{ fontSize: '0.9em', opacity: 0.8 }}>{patch.date}</span>
+                        </AlertTitle>
+                        <AlertDescription>
+                            <ul className="list-disc pl-5 mt-2">
+                                {patch.changes.map((change, changeIndex) => (
+                                    <li key={changeIndex}>{change}</li>
+                                ))}
+                            </ul>
+                        </AlertDescription>
+                    </Alert>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const SVGIcon = ({ name }) => {
     switch (name) {
         case 'damage':
@@ -220,6 +359,124 @@ const TeamDisplay = ({ team, teamName, teamStats }) => (
         )}
     </div>
 );
+
+const TeamAnalysis = ({ blueTeam, redTeam }) => {
+    const Alert = ({ children, className }) => (
+        <div className={`p-4 rounded-lg border ${className}`}>
+            {children}
+        </div>
+    );
+
+    const AlertTitle = ({ children, className }) => (
+        <h3 className={`text-lg font-semibold ${className}`}>
+            {children}
+        </h3>
+    );
+
+    const AlertDescription = ({ children }) => (
+        <div className="mt-2 text-sm">
+            {children}
+        </div>
+    );
+
+    const analyzeTeamComposition = (team) => {
+        const roles = team.map(hero => hero.role);
+        const analysis = {
+            roles: roles,
+            hasTank: roles.includes('Tank'),
+            hasFighter: roles.includes('Fighter'),
+            hasAssassin: roles.includes('Assassin'),
+            hasMage: roles.includes('Mage'),
+            hasMarksman: roles.includes('Marksman'),
+            hasSupport: roles.includes('Support'),
+        };
+
+        return analysis;
+    };
+
+    const determineAdvantage = (blueAnalysis, redAnalysis) => {
+        if (blueTeam.length !== 5 || redTeam.length !== 5) {
+            return null;
+        }
+
+        let blueScore = 0;
+        let redScore = 0;
+
+        // Basic role coverage scoring
+        const essentialRoles = ['Tank', 'Fighter', 'Mage', 'Marksman'];
+        essentialRoles.forEach(role => {
+            if (blueAnalysis.roles.includes(role)) blueScore++;
+            if (redAnalysis.roles.includes(role)) redScore++;
+        });
+
+        // Bonus for having support
+        if (blueAnalysis.hasSupport) blueScore += 0.5;
+        if (redAnalysis.hasSupport) redScore += 0.5;
+
+        // Bonus for having assassin
+        if (blueAnalysis.hasAssassin) blueScore += 0.5;
+        if (redAnalysis.hasAssassin) redScore += 0.5;
+
+        return {
+            advantageTeam: blueScore > redScore ? 'blue' : redScore > blueScore ? 'red' : 'even',
+            blueScore,
+            redScore
+        };
+    };
+
+    const getMissingRoles = (analysis) => {
+        const essentialRoles = ['Tank', 'Fighter', 'Mage', 'Marksman'];
+        return essentialRoles.filter(role => !analysis.roles.includes(role));
+    };
+
+    const blueAnalysis = analyzeTeamComposition(blueTeam);
+    const redAnalysis = analyzeTeamComposition(redTeam);
+    const advantage = determineAdvantage(blueAnalysis, redAnalysis);
+
+    if (!advantage) {
+        return null;
+    }
+
+    const blueMissing = getMissingRoles(blueAnalysis);
+    const redMissing = getMissingRoles(redAnalysis);
+
+    return (
+        <div className="team-analysis">
+            <Alert className={advantage.advantageTeam === 'even' ? 'bg-gray-100 dark:bg-gray-800' :
+                advantage.advantageTeam === 'blue' ? 'bg-blue-100 dark:bg-blue-900' :
+                    'bg-red-100 dark:bg-red-900'}>
+                <AlertTitle>
+                    Team Advantage Analysis
+                </AlertTitle>
+                <AlertDescription>
+                    <div className="mb-2">
+                        {advantage.advantageTeam === 'even' ? (
+                            <p>Teams are evenly matched!</p>
+                        ) : (
+                            <p>{advantage.advantageTeam.charAt(0).toUpperCase() + advantage.advantageTeam.slice(1)} team has a slight advantage.</p>
+                        )}
+                    </div>
+
+                    <div className="mb-2">
+                        <h4 className="font-semibold">Blue Team Composition:</h4>
+                        <p>{blueMissing.length > 0 ?
+                            `Missing: ${blueMissing.join(', ')}` :
+                            'Good role coverage!'}
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 className="font-semibold">Red Team Composition:</h4>
+                        <p>{redMissing.length > 0 ?
+                            `Missing: ${redMissing.join(', ')}` :
+                            'Good role coverage!'}
+                        </p>
+                    </div>
+                </AlertDescription>
+            </Alert>
+        </div>
+    );
+};
 
 function App() {
     const [blueTeam, setBlueTeam] = React.useState([]);
@@ -359,6 +616,11 @@ function App() {
                 <TeamDisplay team={blueTeam} teamName="blue" teamStats={calculateTeamStats(blueTeam)} />
                 <TeamDisplay team={redTeam} teamName="red" teamStats={calculateTeamStats(redTeam)} />
             </div>
+            {(blueTeam.length === 5 && redTeam.length === 5) && (
+                <div className="mb-4">
+                    <TeamAnalysis blueTeam={blueTeam} redTeam={redTeam} />
+                </div>
+            )}
             <h2>Available Heroes</h2>
             <div className="role-selector">
                 {roleOrder.map(role => (
@@ -381,6 +643,7 @@ function App() {
                     />
                 ))}
             </div>
+            <BulletinBoard />
             <Footer />
         </div>
     );
