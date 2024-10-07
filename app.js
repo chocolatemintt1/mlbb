@@ -356,6 +356,7 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
 };
 
 function App() {
+    const [heroesData, setHeroesData] = React.useState([]);
     const [blueTeam, setBlueTeam] = React.useState([]);
     const [redTeam, setRedTeam] = React.useState([]);
     const [selectedRole, setSelectedRole] = React.useState("Tank");
