@@ -1,12 +1,16 @@
 let heroesData = [];
-const xhr = new XMLHttpRequest();
-xhr.open('GET', 'heroes.json', false);
-xhr.send(null);
+const isGitHubPages = window.location.hostname.includes('github.io');
+const basePath = isGitHubPages ? '/mlbb' : '';
 
-if (xhr.status === 200) {
-    heroesData = JSON.parse(xhr.responseText);
-} else {
-    console.error('Failed to load heroes data');
+async function fetchHeroesData() {
+    try {
+        const response = await fetch(`${basePath}/heroes.json`);
+        if (!response.ok) throw new Error('Failed to load heroes data');
+        return await response.json();
+    } catch (error) {
+        console.error('Failed to load heroes data:', error);
+        return [];
+    }
 }
 
 const roleOrder = ["Tank", "Fighter", "Assassin", "Mage", "Marksman", "Support"];
@@ -363,6 +367,10 @@ function App() {
             isDarkMode ? 'dark' : 'light'
         );
     }, [isDarkMode]);
+
+    React.useEffect(() => {
+        fetchHeroesData().then(data => setHeroesData(data));
+    }, []);
 
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
