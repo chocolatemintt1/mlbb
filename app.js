@@ -237,6 +237,13 @@ const AlertDescription = ({ children }) => (
 const patchNotes = [
     // put new patch notes here
     {
+        version: "1.1.1",
+        date: "2024-10-07",
+        changes: [
+            "Minor UI adjustment"
+        ]
+    },
+    {
         version: "1.1.0",
         date: "2024-10-07",
         changes: [
@@ -405,28 +412,89 @@ const TeamDisplay = ({ team, teamName, teamStats }) => (
 );
 
 const TeamAnalysis = ({ blueTeam, redTeam }) => {
-    const Alert = ({ children, className }) => (
-        <div className={`p-4 rounded-lg border ${className}`}>
+    const Card = ({ children, className }) => (
+        <div className={`rounded-lg border shadow-sm ${className}`}>
             {children}
         </div>
     );
 
-    const AlertTitle = ({ children, className }) => (
-        <h3 className={`text-lg font-semibold ${className}`}>
-            {children}
-        </h3>
-    );
-
-    const AlertDescription = ({ children }) => (
-        <div className="mt-2 text-sm">
+    const CardHeader = ({ children, className }) => (
+        <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>
             {children}
         </div>
+    );
+
+    const CardContent = ({ children, className }) => (
+        <div className={`p-6 pt-0 ${className}`}>
+            {children}
+        </div>
+    );
+
+    const Shield = ({ className }) => (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+        >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+    );
+
+    const Swords = ({ className }) => (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+        >
+            <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+            <line x1="13" y1="19" x2="19" y2="13" />
+            <line x1="16" y1="16" x2="20" y2="20" />
+            <line x1="19" y1="21" x2="21" y2="19" />
+            <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+            <line x1="5" y1="14" x2="9" y2="18" />
+            <line x1="7" y1="17" x2="4" y2="20" />
+            <line x1="3" y1="19" x2="5" y2="21" />
+        </svg>
+    );
+
+    const Users = ({ className }) => (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+        >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
     );
 
     const analyzeTeamComposition = (team) => {
         const roles = team.map(hero => hero.role);
         const uniqueRoles = [...new Set(roles)];
-        const analysis = {
+        return {
             roles: roles,
             uniqueRoles: uniqueRoles,
             hasTank: roles.includes('Tank'),
@@ -439,8 +507,6 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
             avgDurability: team.reduce((sum, hero) => sum + hero.durability, 0) / team.length,
             avgCC: team.reduce((sum, hero) => sum + hero.cc, 0) / team.length
         };
-
-        return analysis;
     };
 
     const determineAdvantage = (blueAnalysis, redAnalysis) => {
@@ -452,14 +518,13 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
         let redScore = 0;
         let explanation = [];
 
-        // Basic role coverage scoring
+        // Analysis logic remains the same
         const essentialRoles = ['Tank', 'Fighter', 'Mage', 'Marksman'];
         essentialRoles.forEach(role => {
             if (blueAnalysis.roles.includes(role)) blueScore++;
             if (redAnalysis.roles.includes(role)) redScore++;
         });
 
-        // Role diversity bonus
         if (blueAnalysis.uniqueRoles.length > redAnalysis.uniqueRoles.length) {
             blueScore += 0.5;
             explanation.push("Blue team has better role diversity");
@@ -468,7 +533,6 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
             explanation.push("Red team has better role diversity");
         }
 
-        // Support presence
         if (blueAnalysis.hasSupport && !redAnalysis.hasSupport) {
             blueScore += 0.5;
             explanation.push("Blue team has a support hero for better team sustain");
@@ -477,7 +541,6 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
             explanation.push("Red team has a support hero for better team sustain");
         }
 
-        // Tank presence
         if (blueAnalysis.hasTank && !redAnalysis.hasTank) {
             blueScore += 0.5;
             explanation.push("Blue team has a tank for better frontline");
@@ -486,7 +549,6 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
             explanation.push("Red team has a tank for better frontline");
         }
 
-        // Team stats comparison
         const statsComparison = [];
         if (blueAnalysis.avgDamage > redAnalysis.avgDamage + 1) {
             blueScore += 0.3;
@@ -494,22 +556,6 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
         } else if (redAnalysis.avgDamage > blueAnalysis.avgDamage + 1) {
             redScore += 0.3;
             statsComparison.push("higher damage output");
-        }
-
-        if (blueAnalysis.avgDurability > redAnalysis.avgDurability + 1) {
-            blueScore += 0.3;
-            statsComparison.push("better durability");
-        } else if (redAnalysis.avgDurability > blueAnalysis.avgDurability + 1) {
-            redScore += 0.3;
-            statsComparison.push("better durability");
-        }
-
-        if (blueAnalysis.avgCC > redAnalysis.avgCC + 1) {
-            blueScore += 0.3;
-            statsComparison.push("more crowd control");
-        } else if (redAnalysis.avgCC > blueAnalysis.avgCC + 1) {
-            redScore += 0.3;
-            statsComparison.push("more crowd control");
         }
 
         if (statsComparison.length > 0) {
@@ -537,54 +583,79 @@ const TeamAnalysis = ({ blueTeam, redTeam }) => {
     const redAnalysis = analyzeTeamComposition(redTeam);
     const advantage = determineAdvantage(blueAnalysis, redAnalysis);
 
-    if (!advantage) {
-        return null;
-    }
+    if (!advantage) return null;
 
     const blueMissing = getMissingRoles(blueAnalysis);
     const redMissing = getMissingRoles(redAnalysis);
 
+    const getBackgroundColor = () => {
+        switch (advantage.advantageTeam) {
+            case 'blue':
+                return 'bg-blue-100 dark:bg-blue-950';
+            case 'red':
+                return 'bg-red-100 dark:bg-red-950';
+            default:
+                return 'bg-gray-100 dark:bg-gray-900';
+        }
+    };
+
     return (
-        <div className="team-analysis">
-            <Alert className={advantage.advantageTeam === 'even' ? 'bg-gray-100 dark:bg-gray-800' :
-                advantage.advantageTeam === 'blue' ? 'bg-blue-100 dark:bg-blue-900' :
-                    'bg-red-100 dark:bg-red-900'}>
-                <AlertTitle>
-                    Team Advantage Analysis
-                </AlertTitle>
-                <AlertDescription>
-                    <div className="mb-4">
-                        <p className="font-semibold mb-2">
-                            {advantage.advantageTeam === 'even' ? (
-                                'Teams are evenly matched!'
-                            ) : (
-                                `${advantage.advantageTeam.charAt(0).toUpperCase() + advantage.advantageTeam.slice(1)} team has an advantage.`
-                            )}
-                        </p>
-                        <div className="ml-4">
+        <div className="w-full max-w-4xl mx-auto px-4 mb-8">
+            <Card className={`${getBackgroundColor()} transition-colors duration-300`}>
+                <CardHeader className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl md:text-2xl font-bold">Team Advantage Analysis</h3>
+                        {advantage.advantageTeam !== 'even' && (
+                            <Shield className={`w-6 h-6 ${advantage.advantageTeam === 'blue' ? 'text-blue-600' : 'text-red-600'}`} />
+                        )}
+                    </div>
+                    <p className="text-lg font-semibold">
+                        {advantage.advantageTeam === 'even'
+                            ? 'Teams are evenly matched!'
+                            : `${advantage.advantageTeam.charAt(0).toUpperCase() + advantage.advantageTeam.slice(1)} team has an advantage`}
+                    </p>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <h4 className="font-semibold flex items-center gap-2">
+                            <Swords className="w-5 h-5" />
+                            Key Advantages
+                        </h4>
+                        <ul className="list-disc pl-6 space-y-1">
                             {advantage.explanation.map((exp, index) => (
-                                <p key={index} className="mb-1">• {exp}</p>
+                                <li key={index} className="text-sm md:text-base">{exp}</li>
                             ))}
+                        </ul>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <h4 className="font-semibold flex items-center gap-2">
+                                <Users className="w-5 h-5 text-blue-600" />
+                                Blue Team Composition
+                            </h4>
+                            <p className="text-sm md:text-base">
+                                {blueMissing.length > 0
+                                    ? `Missing: ${blueMissing.join(', ')}`
+                                    : 'Good role coverage!'}
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h4 className="font-semibold flex items-center gap-2">
+                                <Users className="w-5 h-5 text-red-600" />
+                                Red Team Composition
+                            </h4>
+                            <p className="text-sm md:text-base">
+                                {redMissing.length > 0
+                                    ? `Missing: ${redMissing.join(', ')}`
+                                    : 'Good role coverage!'}
+                            </p>
                         </div>
                     </div>
-
-                    <div className="mb-2">
-                        <h4 className="font-semibold">Blue Team Composition:</h4>
-                        <p>{blueMissing.length > 0 ?
-                            `Missing: ${blueMissing.join(', ')}` :
-                            'Good role coverage!'
-                        }</p>
-                    </div>
-
-                    <div>
-                        <h4 className="font-semibold">Red Team Composition:</h4>
-                        <p>{redMissing.length > 0 ?
-                            `Missing: ${redMissing.join(', ')}` :
-                            'Good role coverage!'
-                        }</p>
-                    </div>
-                </AlertDescription>
-            </Alert>
+                </CardContent>
+            </Card>
         </div>
     );
 };
