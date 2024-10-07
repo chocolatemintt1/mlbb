@@ -362,7 +362,7 @@ button:disabled {
         padding: 6px 10px;
         font-size: 0.8rem;
     }
-    
+
     .team-hero-image {
         width: 30px;
         height: 30px;
@@ -370,5 +370,58 @@ button:disabled {
 
     .hero-stats {
         font-size: 0.8rem;
+    }
+}
+
+/* Bulletin Board Styles */
+.bulletin-board {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.bulletin-header:hover {
+    background-color: var(--button-background) !important;
+}
+
+.bulletin-content {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease-in-out;
+}
+
+.bulletin-content.expanded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media screen and (max-width: 768px) {
+    .bulletin-board {
+        padding: 0 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .bulletin-header {
+        padding: 10px !important;
+    }
+
+    .bulletin-header h2 {
+        font-size: 1.2rem;
+    }
+}
+
+.team-analysis {
+    margin-bottom: 20px;
+}
+
+.team-analysis .alert {
+    transition: background-color 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+    .team-analysis {
+        margin-bottom: 15px;
     }
 }
