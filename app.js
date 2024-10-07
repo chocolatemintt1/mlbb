@@ -237,7 +237,7 @@ const AlertDescription = ({ children }) => (
 const patchNotes = [
     {
         version: "1.0.0",
-        date: "2024-04-07",
+        date: "2024-04-06",
         changes: [
             "Initial release of MLBB Team Composition Analyzer",
             "Added hero selection system",
@@ -247,13 +247,14 @@ const patchNotes = [
     },
     {
         version: "1.1.0",
-        date: "2024-04-08",
+        date: "2024-10-07",
         changes: [
             "Added role filtering system",
             "Improved UI responsiveness",
             "Added team statistics calculation",
             "Implemented reset functionality",
-            "Added [Team Advantage Analysis] after both team picked their hero compositions"
+            "Added [Team Advantage Analysis] after both team picked their hero compositions",
+            "Added all 125 heroes"
         ]
     }
     // Add more patch notes as needed
