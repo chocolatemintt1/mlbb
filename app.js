@@ -89,7 +89,13 @@ const patchNotes = [
             "Added team statistics calculation",
             "Implemented reset functionality",
             "Added [Team Advantage Analysis] after both team picked their hero compositions",
-            "Added all 125 heroes"
+            "Added all 125 heroes",
+            "Added team stats analysis (damage, durability, CC)",
+            "Included role diversity evaluation",
+            "Added support and tank presence analysis",
+            "Created a detailed explanation system that highlights specific advantages",
+            "Improved the visual presentation of the analysis",
+            "The component will now show why one team has an advantage over the other, or why they're evenly matched"
         ]
     }
     // Add more patch notes as needed
