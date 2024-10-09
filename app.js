@@ -245,7 +245,7 @@ const patchNotes = [
     },
     {
         version: "1.1.1",
-        date: "2024-10-07",
+        date: "2024-10-08",
         changes: [
             "Minor UI adjustment"
         ]
